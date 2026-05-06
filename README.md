@@ -38,8 +38,8 @@ A Real-Time Collaborative Budget Allocator designed for dynamic financial planni
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/ishraddhapawar/AGMRCET.git
-   cd AGMRCET/budgetsync
+   git clone https://github.com/ishraddhapawar/BudgetSync.git
+   cd BudgetSync/budgetsync
    ```
 
 2. **Backend Setup:**
