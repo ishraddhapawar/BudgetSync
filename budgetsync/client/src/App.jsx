@@ -7,6 +7,8 @@ import InteractiveWavesBackground from './InteractiveWavesBackground';
 import ForceFieldBackground from './ForceFieldBackground';
 import { Eye, EyeOff } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const TOTAL_BUDGET = 100000000;
@@ -88,7 +90,7 @@ export default function App() {
   useEffect(() => {
     if (currentUser) {
       const fetchState = () => {
-        axios.get('http://localhost:5000/api/state')
+        axios.get(`${API_URL}/api/state`)
           .then(res => setAppState(res.data))
           .catch(e => console.error('Auto-poll error:', e));
       };
@@ -125,7 +127,7 @@ export default function App() {
     
     try {
       const endpoint = isSignup ? '/api/signup' : '/api/login';
-      const res = await axios.post(`http://localhost:5000${endpoint}`, data);
+      const res = await axios.post(`${API_URL}${endpoint}`, data);
       setCurrentUser(res.data.user);
       localStorage.setItem('token', res.data.token);
     } catch (err) {
@@ -148,7 +150,7 @@ export default function App() {
   const syncState = async (newState) => {
     setAppState({ ...newState });
     try {
-      await axios.post('http://localhost:5000/api/state', newState);
+      await axios.post(`${API_URL}/api/state`, newState);
     } catch (e) {
       console.error('Failed to sync state', e);
     }
@@ -197,7 +199,7 @@ export default function App() {
                   }
                   try {
                     setAuthLoading(true);
-                    const res = await axios.post('http://localhost:5000/api/auth/reset-password', { token: resetToken, newPassword: password });
+                    const res = await axios.post(`${API_URL}/api/auth/reset-password`, { token: resetToken, newPassword: password });
                     setResetSuccessMessage(res.data.message);
                     setAuthError('');
                   } catch (err) {
@@ -250,7 +252,7 @@ export default function App() {
                 <form onSubmit={async (e) => {
                   e.preventDefault();
                   try {
-                    const res = await axios.post('http://localhost:5000/api/auth/recover', { contact: recoveryContact, method: recoveryMethod });
+                    const res = await axios.post(`${API_URL}/api/auth/recover`, { contact: recoveryContact, method: recoveryMethod });
                     setRecoverySuccess(res.data.message);
                   } catch (err) {
                     setRecoverySuccess(err.response?.data?.error || 'Failed to send reset link.');
@@ -484,7 +486,7 @@ export default function App() {
   if (!appState) return <div style={{padding: 40}}>Loading dashboard...</div>;
 
   const refreshState = () => {
-    axios.get('http://localhost:5000/api/state').then(res => setAppState(res.data)).catch(e => console.error(e));
+    axios.get(`${API_URL}/api/state`).then(res => setAppState(res.data)).catch(e => console.error(e));
   };
 
   // Route Disbursing Officers to their dedicated dashboard
@@ -663,7 +665,7 @@ export default function App() {
             showToast(`Conflict for ${getDept(req.id).name}`, 'warning');
             detectConflicts(draft);
           }
-          axios.post('http://localhost:5000/api/state', draft).catch(()=>console.log('sync error'));
+          axios.post(`${API_URL}/api/state`, draft).catch(()=>console.log('sync error'));
           return draft;
         });
       }, idx * 400);
